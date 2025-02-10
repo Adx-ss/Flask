@@ -1,16 +1,16 @@
-from flask import Flask
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-# ✅ Fix: Add a home route to prevent 404 errors
-@app.route("/")  
+@app.route("/")
 def home():
     return "Flask API is running on Render!"
 
-# Your existing endpoints
 @app.route("/receive-data", methods=["POST"])
 def receive_data():
-    return {"message": "Data received successfully"}
+    data = request.get_json()
+    print("Received Data from Google Apps Script:", data)  # ✅ Logs data in Render
+    return jsonify({"message": "Data received successfully", "received_data": data})
 
 if __name__ == "__main__":
     app.run(debug=True)
