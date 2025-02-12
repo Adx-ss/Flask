@@ -1,16 +1,10 @@
-from flask import Flask, request, jsonify
+import os
+from pymongo import MongoClient
 
-app = Flask(__name__)
+# ✅ Fetch MongoDB URI from Render's environment variables
+MONGO_URI = os.getenv("MONGO_URI")
 
-@app.route("/")
-def home():
-    return "Flask API is running on Render!"
-
-@app.route("/receive-data", methods=["POST"])
-def receive_data():
-    data = request.get_json()
-    print("Received Data from Google Apps Script:", data)  # ✅ Logs data in Render
-    return jsonify({"message": "Data received successfully", "received_data": data})
-
-if __name__ == "__main__":
-    app.run(debug=True)
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client["Sample"]  # Database name
+collection = db["your_collection_name"]  # Replace with actual collection
