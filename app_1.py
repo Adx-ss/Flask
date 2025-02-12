@@ -17,14 +17,28 @@ collection = db["your_collection_name"]  # Replace with actual collection
 def home():
     return "Flask API is running on Render!"
 
-@app.route("/get-mongo-data", methods=["GET"])
-def get_mongo_data():
+@app.route("/query-mongo-data", methods=["GET"])
+def query_mongo_data():
     """
-    Retrieve data from MongoDB and return as JSON.
+    Fetch MongoDB data and allow filtering by accountId or primary_media_buyer.
     """
     try:
-        data = list(collection.find({}, {"_id": 0}))  # Exclude MongoDB `_id` field
+        # Get query parameters
+        account_id = request.args.get("accountId")
+        media_buyer = request.args.get("primary_media_buyer")
+
+        # Build the query dynamically
+        query = {}
+        if account_id:
+            query["acountId"] = account_id  # Keep original MongoDB field name
+        if media_buyer:
+            query["primary_media_buyer"] = media_buyer
+
+        # Fetch data from MongoDB
+        data = list(collection.find(query, {"_id": 0}))  # Exclude `_id`
+        
         return jsonify({"message": "Data retrieved", "data": data})
+    
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
